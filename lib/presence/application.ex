@@ -8,12 +8,11 @@ defmodule Presence.Application do
   def start(_type, _args) do
     # List all child processes to be supervised
     children = [
-      # Start the Ecto repository
-      Presence.Repo,
       # Start the endpoint when the application starts
-      PresenceWeb.Endpoint
+      PresenceWeb.Endpoint,
       # Starts a worker by calling: Presence.Worker.start_link(arg)
       # {Presence.Worker, arg},
+      PresenceWeb.Presence
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

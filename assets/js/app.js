@@ -15,3 +15,29 @@ import "phoenix_html"
 //
 // Local files can be imported directly using relative paths, for example:
 // import socket from "./socket"
+
+import {Socket, Presence} from "phoenix"
+
+let socket = new Socket("/socket", {
+  params: {}
+})
+
+let channel = socket.channel("vote:lobby", {})
+let presence = new Presence(channel)
+
+function renderOnlineUsers(presence) {
+  let response = ""
+
+  presence.list((id, {metas: [first, ...rest]}) => {
+    let count = rest.length + 1
+    response += `<br>${id} (count: ${count})</br>`
+  })
+
+  document.querySelector("h1").innerHTML = response
+}
+
+socket.connect()
+
+presence.onSync(() => renderOnlineUsers(presence))
+
+channel.join()
