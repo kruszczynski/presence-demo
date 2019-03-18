@@ -2,8 +2,7 @@ defmodule PresenceWeb.UserSocket do
   use Phoenix.Socket
 
   ## Channels
-  # channel "room:*", PresenceWeb.RoomChannel
-  channel "vote:*", PresenceWeb.VoteChannel
+  channel "vote:lobby", PresenceWeb.VoteChannel
 
   # Socket params are passed from the client and can
   # be used to verify and authenticate a user. After
@@ -16,8 +15,9 @@ defmodule PresenceWeb.UserSocket do
   #
   # See `Phoenix.Token` documentation for examples in
   # performing token verification on connect.
-  def connect(params, socket, connect_info) do
-    {:ok, socket}
+  def connect(_params, socket, _connect_info) do
+    dumb_id = System.system_time()
+    {:ok, assign(socket, :user_id, dumb_id)}
   end
 
   # Socket id's are topics that allow you to identify all sockets for a given user:

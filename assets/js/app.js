@@ -25,19 +25,36 @@ let socket = new Socket("/socket", {
 let channel = socket.channel("vote:lobby", {})
 let presence = new Presence(channel)
 
-function renderOnlineUsers(presence) {
-  let response = ""
-
-  presence.list((id, {metas: [first, ...rest]}) => {
-    let count = rest.length + 1
-    response += `<br>${id} (count: ${count})</br>`
-  })
-
-  document.querySelector("h1").innerHTML = response
+const setCount = (node, count) => {
+  node.querySelector('[data-count]').innerText = count
 }
 
 socket.connect()
 
-presence.onSync(() => renderOnlineUsers(presence))
+presence.onSync(() => {
+  let votes = {
+    ruby: 0,
+    elixir: 0,
+    german: 0,
+    java: 0,
+  }
+
+  presence.list((id, {metas: [first, ...rest]}) => {
+    votes[first.vote] += 1
+  })
+
+  setCount(document.querySelector('[data-lang=elixir]'), votes.elixir)
+  setCount(document.querySelector('[data-lang=ruby]'), votes.ruby)
+  setCount(document.querySelector('[data-lang=java]'), votes.java)
+  setCount(document.querySelector('[data-lang=german]'), votes.german)
+})
 
 channel.join()
+
+document.querySelectorAll('[data-vote]').forEach((element) => {
+  element.addEventListener('click', (e) => {
+    e.preventDefault()
+    let vote = element.dataset.vote
+    channel.push('vote', {vote: vote})
+  })
+})
