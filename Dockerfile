@@ -10,6 +10,7 @@ RUN mix deps.get && mix deps.compile
 RUN cd assets && npm install
 COPY . .
 RUN cd assets && node_modules/webpack/bin/webpack.js --mode production
+RUN echo 'use Mix.Config' > config/prod.secret.exs
 RUN mix phx.digest
 RUN mix compile
 
